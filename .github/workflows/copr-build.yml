@@ -136,11 +136,6 @@ jobs:
     outputs:
       batches: ${{ steps.split.outputs.batches }}
       batch0: ${{ steps.split.outputs.batch0 }}
-      batch1: ${{ steps.split.outputs.batch1 }}
-      batch2: ${{ steps.split.outputs.batch2 }}
-      batch3: ${{ steps.split.outputs.batch3 }}
-      batch4: ${{ steps.split.outputs.batch4 }}
-      batch5: ${{ steps.split.outputs.batch5 }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
