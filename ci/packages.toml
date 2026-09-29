@@ -1,0 +1,297 @@
+# ci/packages.toml — the cli-tools build registry + sweep-feed config.
+#
+# Consumed by ci/matrix.py (build selection) and ci/sweep/sweep.py (version
+# sweep). One table per package; **a package without an entry is not built**.
+# The specs themselves live in pkgs/<pkg>/<pkg>.spec.
+#
+# Batches are dependency levels, not parallel groups within one job:
+# copr-build.yml submits the waves sequentially and waits for each wave's
+# Copr builds before the next — each successful build is immediately visible
+# to the project repo, so a package may rely on anything built in a lower
+# batch. Packages inside one batch must therefore never depend on each other.
+#
+# Build-time dependencies that Fedora 44 does not provide: glaze, hyprwire
+# and hyprtoolkit are packaged in THIS repo (ports of the lionheartp/Hyprland
+# Copr specs; the fourth input, wlroots, ships in Fedora 44 itself). The
+# lionheartp Copr stays configured on the Copr chroot only as a lowest-
+# priority bootstrap for fresh projects; once our own builds exist, the
+# project repo wins. Terra 44 is also configured there (anda-srpm-macros for
+# the rust specs). See notes/copr-setup.md.
+#
+# The optional [pkg.updates] table drives the daily sweep (update.yml):
+#   feed = "github-release"  + repo = "owner/name"   latest GitHub release tag
+#   feed = "github-tag"      + repo = "owner/name"   newest git tag
+#   feed = "custom"          + custom = "<name>"     ci/sweep/custom.py function
+# Packages without it (texlive rolling groups) are never swept.
+#
+# The optional `project = "<copr-project>"` field routes a package's
+# builds to that Copr project (default "halcyon", the desktop core).
+# matrix.py emits it as a build-matrix label; unknown projects fail
+# validation. Every project must own a disjoint set of packages.
+#
+# batch 0  roots: Fedora-only build deps and leaf tools/apps/wrappers
+# batch 1  first level: hyprlang, aquamarine, hyprgraphics, hyprwire, noctalia-greeter-git
+# batch 2  second level: hyprcursor, hyprland-qt-support, xdg-desktop-portal-hyprland, hyprtoolkit
+# batch 3  third level: hyprland-git, hyprland-guiutils, hyprpwcenter, hyprshutdown, kernel-p03, noctalia-git, onlyoffice-desktopeditors
+# batch 4  intentionally empty
+# batch 5  texlive rolling groups (40 generated packages)
+
+# --------------------------------------------------------------- desktops
+
+# --- batch 0 ------------------------------------------------------------
+[bun]
+batch = 0
+
+[bun.updates]
+feed = "custom"
+custom = "bun"
+
+# tealdeer: Rust source build (crates.io) + completions generated at build time.
+[tealdeer]
+batch = 0
+
+[tealdeer.updates]
+feed = "github-release"
+repo = "dbrgn/tealdeer"
+
+# uv: official musl tarball (uv + uvx), completions generated at build time.
+[uv]
+batch = 0
+
+[uv.updates]
+feed = "github-release"
+repo = "astral-sh/uv"
+
+# atuin: Rust source build (crates.io).
+[atuin]
+batch = 0
+
+[atuin.updates]
+feed = "github-release"
+repo = "atuinsh/atuin"
+
+# bat: Rust source build (crates.io); binary only.
+[bat]
+batch = 0
+
+[bat.updates]
+feed = "github-release"
+repo = "sharkdp/bat"
+
+# bat-extras: bat companion scripts (batdiff/batgrep/batman/batpipe/
+# batwatch/prettybat), noarch build.sh-driven; ported from Terra.
+[bat-extras]
+batch = 0
+
+[bat-extras.updates]
+feed = "github-release"
+repo = "eth-p/bat-extras"
+
+# eza: Rust source build (crates.io); binary only.
+[eza]
+batch = 0
+
+[eza.updates]
+feed = "github-release"
+repo = "eza-community/eza"
+
+# gnuplot: source build from the official SourceForge tarball (lean
+# console/cairo configuration). Version sweeps SourceForge best_release.
+[gnuplot]
+batch = 0
+
+[gnuplot.updates]
+feed = "custom"
+custom = "gnuplot"
+
+# kitty: GPU terminal, source build adapted from LionHeartP/hyprlandRPM's
+# spec (online Go modules for kitten, in-repo appdata, pinned nerd font,
+# sphinx man pages). Subpackages: terminfo, shell-integration, kitten.
+[cava]
+batch = 0
+
+[cava.updates]
+feed = "github-release"
+repo = "karlstav/cava"
+
+# pixi: official musl binary + completions generated at build time. (A
+# source-build attempt was reverted — it hung in CI and costs 1-2h on
+# runners; Terra builds it from source with %cargo_prep_online.)
+[pixi]
+batch = 0
+
+[pixi.updates]
+feed = "github-release"
+repo = "prefix-dev/pixi"
+
+# zotero follows terrapkg's spec (install layout, desktop file, icons,
+# appstream) over the OFFICIAL prebuilt tarball — the npm source build is
+# unbuildable today (its CI artifact S3 bucket 403s for current tags, see
+# the zotero.spec header). Version sweeps the zotero/zotero git tag but only
+# lands on tags whose linux tarball is actually published on
+# download.zotero.org — the 10.0.4 tag's tarball 403s upstream and killed the
+# 2026-09-27 batch-0 submit (custom_zotero in ci/sweep/custom.py).
+[xwiimote-ng]
+batch = 0
+
+# zoxide / fd-find / cliphist: rust source builds (cliphist builds from the
+# tag tarball — it does not publish to crates.io). zoxide and fd-find shadow
+# older Fedora versions; cliphist matches Fedora's 0.7.0 and wins on priority.
+[zoxide]
+batch = 0
+
+[zoxide.updates]
+feed = "github-release"
+repo = "ajeetdsouza/zoxide"
+
+# asdf: version manager, Go source build in the house nwg-look pattern
+# (plain go build, modules from the Go proxy at build time) instead of
+# Terra's go2rpm machinery.
+[asdf]
+batch = 0
+
+[asdf.updates]
+feed = "github-release"
+repo = "asdf-vm/asdf"
+
+[fd-find]
+batch = 0
+
+[fd-find.updates]
+feed = "github-release"
+repo = "sharkdp/fd"
+
+[cliphist]
+batch = 0
+
+[cliphist.updates]
+feed = "github-release"
+repo = "sentriz/cliphist"
+
+# topgrade: rust source build ported from li-lay/topgrade-watcher (their Copr
+# spec sweeps the same topgrade-rs/topgrade releases). Not in Fedora. The
+# github-release feed returns the raw v-tag; set_version strips it for both
+# the Version line and the crates.io Source URL.
+[topgrade]
+batch = 0
+
+[topgrade.updates]
+feed = "github-release"
+repo = "topgrade-rs/topgrade"
+
+[xwiimote-ng.updates]
+feed = "github-tag"
+repo = "dev-0x7C6/xwiimote-ng"
+
+# ticktick follows the AUR PKGBUILD (vendor .deb payload, launcher, SUID
+# sandbox). TickTick publishes no first-party version feed, so the version
+# sweeps the AUR package via the AUR RPC API — the AUR maintainer tracks
+# upstream releases.
+[fzf]
+batch = 0
+
+[fzf.updates]
+feed = "github-release"
+repo = "junegunn/fzf"
+
+# fzy: small C fuzzy finder, plain source build (Fedora ships it in
+# nothing relevant; upstream tags v1.1 and 1.1 at the same commit).
+[fzy]
+batch = 0
+
+[fzy.updates]
+feed = "github-tag"
+repo = "jhawthorn/fzy"
+
+# kilo: Kilo Code CLI tree wrapper per the AUR kilo-bin PKGBUILD. The
+# GitHub tag space is polluted by jetbrains/* tags — the npm dist-tag is
+# the channel the CLI's own updater follows.
+[kilo]
+batch = 0
+
+[kilo.updates]
+feed = "custom"
+custom = "kilo"
+
+# opencode-desktop: vendor RPM rewrap (bundled Electron). The version is
+# resolved from the 302 target of opencode.ai's stable download endpoint.
+[chafa]
+batch = 0
+
+[chafa.updates]
+feed = "github-release"
+repo = "hpjansson/chafa"
+
+[dust]
+batch = 0
+
+[dust.updates]
+feed = "github-release"
+repo = "bootandy/dust"
+
+[lazygit]
+batch = 0
+
+[lazygit.updates]
+feed = "github-release"
+repo = "jesseduffield/lazygit"
+
+[pandoc]
+batch = 0
+
+[pandoc.updates]
+feed = "github-release"
+repo = "jgm/pandoc"
+
+[starship]
+batch = 0
+
+[starship.updates]
+feed = "github-release"
+repo = "starship/starship"
+
+[yazi]
+batch = 0
+
+[yazi.updates]
+feed = "github-release"
+repo = "sxyazi/yazi"
+
+[zellij]
+batch = 0
+
+[zellij.updates]
+feed = "github-release"
+repo = "zellij-org/zellij"
+
+# opencode: terminal AI coding agent, repackaged from the current release
+# tarball.
+[opencode]
+batch = 0
+
+[opencode.updates]
+feed = "custom"
+custom = "opencode"
+
+# marksman: Markdown LSP server, wrapper over the upstream self-contained
+# .NET release binary (no crates.io publish, not in Fedora).
+[marksman]
+batch = 0
+
+[marksman.updates]
+feed = "custom"
+custom = "marksman"
+
+# texlab: LaTeX LSP server, Rust source build from the release tag tarball
+# (the crates.io texlab is stale upstream; yazi pattern).
+[texlab]
+batch = 0
+
+[texlab.updates]
+feed = "github-release"
+repo = "latex-lsp/texlab"
+
+# ------------------------------------------------------------ hyprland-adjacent
+# nwg-look and qt6ct follow LionHeartP/hyprlandRPM (the Hyprland ecosystem
+# repo, like the hyprwm stack above): nwg-look builds from the Go module
+# proxy at %build time; qt6ct pins a GitLab commit of the canonical repo.
