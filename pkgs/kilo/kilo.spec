@@ -6,7 +6,7 @@
 %global _build_id_links none
 
 Name:           kilo
-Version:        7.8.1
+Version:        7.8.3
 Release:        1%{?dist}
 Summary:        The AI coding agent built for the terminal
 
