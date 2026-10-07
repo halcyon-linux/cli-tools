@@ -276,3 +276,11 @@ repo = "latex-lsp/texlab"
 # nwg-look and qt6ct follow LionHeartP/hyprlandRPM (the Hyprland ecosystem
 # repo, like the hyprwm stack above): nwg-look builds from the Go module
 # proxy at %build time; qt6ct pins a GitLab commit of the canonical repo.
+
+# ------------------------------------------------------------ markdown / terminal UI
+# glow: source build via go-vendor-tools — the vendored-dependencies tarball
+# is version-locked to Fedora's (Source1 pins the lookaside sha512), so there
+# is deliberately NO sweep feed: a github-release bump would orphan the vendor
+# tarball. Bump = take Fedora's matching version + its new lookaside hash.
+[glow]
+batch = 0
