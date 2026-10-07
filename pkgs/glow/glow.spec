@@ -4,7 +4,10 @@
 #     `spectool -g` can fetch it at SRPM-build time (Copr builds have no
 #     network and the submit job has no lookaside integration)
 #   - Source2 (go-vendor-tools.toml) is a local file shipped from pkgs/glow/
-#   - explicit Release + changelog instead of %autorelease/%autochangelog
+#   - explicit Release + changelog instead of the upstream autorelease and
+#     autochangelog macros — the names are spelled WITHOUT the percent sign
+#     on purpose: rpm expands macros even inside comments, and autochangelog
+#     outside dist-git expands to a multi-line blob that breaks spec parsing
 #     (no dist-git context in Copr)
 # Bump procedure: take Fedora's matching new version AND its new vendor
 # tarball — update Version, the Source1 hash and filename together.
@@ -86,7 +89,7 @@ install -d -m 0755 %{buildroot}%{fish_completions_dir}
 
 
 %changelog
-* Tue Oct 07 2026 ahsan <aahsnr041@proton.me> - 3.0.0-1
+* Wed Oct 07 2026 ahsan <aahsnr041@proton.me> - 3.0.0-1
 - import Fedora f45's glow.spec (source build via go-vendor-tools; the
   vendored-dependencies tarball comes from Fedora's lookaside) — was:
   glow only shipped in the bazzite base
