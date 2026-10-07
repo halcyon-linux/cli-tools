@@ -1,10 +1,15 @@
 # Ported to opencode's v2 line (2.0.x — the major rewrite). Upstream ships no
-# rpm; the v2 install script resolves the version from
+# rpm; the v2 install command (`curl -fsSL https://opencode.ai/v2/install |
+# bash`) resolves the version from
 # https://opencode.ai/update/api/latest/cli/npm and installs the binary from
 # the npm package @opencode/cli-linux-x64 (single executable at package/bin/
-# opencode). The same npm tarball is repackaged here — Source0 is pinned to
-# the @opencode scope; update.rhai resolves the scope dynamically in case
-# upstream moves it (like the legacy @opencode-ai one).
+# opencode) into ~/.opencode/bin. Source0 is that SAME tarball — this RPM is
+# the system-wide equivalent of the installer, wrapped per the house pattern
+# (real binary under %{_libdir}, %{_bindir} symlink), and %check refuses any
+# upstream artifact that does not identify as opencode (2.0.20 shipped a
+# binary whose --version printed the bun banner — 2026-10-07 VM regression).
+# The @opencode scope is pinned here; update.rhai resolves it dynamically in
+# case upstream moves it (like the legacy @opencode-ai one).
 Name:           opencode
 Version:        2.0.23
 Release:        1%{?dist}
@@ -25,10 +30,23 @@ AI coding agent built for the terminal, from the upstream v2 release binary.
 # tarball is provided at SRPM-build time, never downloaded in %prep.
 tar -xzf %{_sourcedir}/cli-linux-x64-%{version}.tgz
 %install
-install -Dm0755 package/bin/opencode %{buildroot}%{_bindir}/opencode
+install -Dm0755 package/bin/opencode %{buildroot}%{_libdir}/opencode/opencode
+ln -s %{_libdir}/opencode/opencode %{buildroot}%{_bindir}/opencode
+%check
+# the artifact is a bun-compiled executable: a bad upstream build presents
+# as the bun banner instead of opencode (the 2.0.20 regression) — refuse it
+%{buildroot}%{_libdir}/opencode/opencode --version | grep -q '^opencode v'
 %files
+%dir %{_libdir}/opencode
+%{_libdir}/opencode/opencode
 %{_bindir}/opencode
 %changelog
+* Tue Oct 07 2026 halcyon-autobuild - 2.0.23-1
+- wrapper install: the real binary lives under %%{_libdir}/opencode with a
+  %%{_bindir} symlink (house binary-wrapper pattern) instead of a raw copy
+  into /usr/bin — the system-wide equivalent of the v2 curl installer
+- add %%check smoke gate: --version must identify as opencode; 2.0.20's
+  artifact printed the bun banner and shipped anyway
 * Tue Sep 22 2026 halcyon-autobuild - 2.0.14-5
 - follow the v2 line (major rewrite): the version now sweeps
   opencode.ai/update/api/latest/cli/npm and the binary comes from the
