@@ -22,7 +22,7 @@
 %global fish_completions_dir %{_datadir}/fish/vendor_completions.d
 
 Name:		bun
-Version:		1.4.2
+Version:		1.4.3
 Release:		1%{?dist}
 Summary:		Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 License:		MIT

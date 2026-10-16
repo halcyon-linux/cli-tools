@@ -8,8 +8,8 @@
 %define debug_package %{nil}
 %global _build_id_links none
 Name:           pixi
-Version:        0.81.0
-Release:        2%{?dist}
+Version:        0.82.0
+Release:        1%{?dist}
 Summary:        A cross-platform, multi-language package manager and workflow tool
 # pixi itself is BSD-3-Clause; the static binary also embeds Rust dependency
 # code under its own licenses (see terra's pixi.spec for the full SPDX dump)

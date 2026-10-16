@@ -5,7 +5,7 @@
 %global _build_id_links none
 
 Name:           fzf
-Version:        0.74.4
+Version:        0.74.5
 Release:        1%{?dist}
 Summary:        A command-line fuzzy finder
 

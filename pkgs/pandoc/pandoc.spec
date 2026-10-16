@@ -1,5 +1,5 @@
 Name:           pandoc
-Version:	3.12
+Version:	3.12.1
 Release:        1%{?dist}
 Summary:        Universal markup converter (upstream release binary)
 License:        GPL-2.0-or-later
