@@ -1,8 +1,9 @@
 # Fedora f45 dist-git glow.spec (src.fedoraproject.org/rpms/glow, branch
 # f45 — identical to rawhide), adapted to this repo's build flow:
 #   - Source1 carries the FULL Fedora lookaside URL (sha512 embedded) so
-#     `spectool -g` can fetch it at SRPM-build time (Copr builds have no
-#     network and the submit job has no lookaside integration)
+#     `spectool -g` can fetch it at SRPM-build time — the submit job has no
+#     dist-git lookaside integration, so CI sources must be plain URLs; the
+#     fully vendored tree keeps the rpmbuild stage itself offline.
 #   - Source2 (go-vendor-tools.toml) is a local file shipped from pkgs/glow/
 #   - explicit Release + changelog instead of the upstream autorelease and
 #     autochangelog macros — the names are spelled WITHOUT the percent sign
@@ -13,11 +14,13 @@
 # tarball — update Version, the Source1 hash and filename together.
 %bcond check 1
 
+%define debug_package %{nil}
+
 %global gomodulesmode GO111MODULE=on
 
 Name:           glow
 Version:        3.0.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 ExclusiveArch:  %{golang_arches_future}
 Summary:        Terminal based markdown reader
 License:        Apache-2.0 AND BSD-3-Clause AND MIT AND OFL-1.1
@@ -89,6 +92,12 @@ install -d -m 0755 %{buildroot}%{fish_completions_dir}
 
 
 %changelog
+* Fri Oct 16 2026 ahsan <aahsnr041@proton.me> - 3.0.0-2
+- add the debug_package nil define (Copr was publishing glow-debuginfo and
+  glow-debugsource; this repo ships no debug packages)
+- correct the header's build-network note: the vendored tree keeps this
+  build offline, and the full Source1 URL exists because the CI submit job
+  has no dist-git lookaside integration
 * Wed Oct 07 2026 ahsan <aahsnr041@proton.me> - 3.0.0-1
 - import Fedora f45's glow.spec (source build via go-vendor-tools; the
   vendored-dependencies tarball comes from Fedora's lookaside) — was:
