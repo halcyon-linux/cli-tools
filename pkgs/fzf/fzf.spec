@@ -13,7 +13,6 @@ License:        MIT
 URL:            https://github.com/junegunn/fzf
 Source0:        %{url}/releases/download/v%{version}/fzf-%{version}-linux_amd64.tar.gz
 Source1:        %{url}/archive/refs/tags/v%{version}.tar.gz
-#!RemoteAsset
 ExclusiveArch:  x86_64
 
 Requires:       bash

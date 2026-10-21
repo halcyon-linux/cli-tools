@@ -75,11 +75,13 @@ mock -r /tmp/copr.cfg <srpm>
   submit it.
 - Touching `ci/**` or `.github/builder/**` makes `ci/matrix.py` rebuild
   _every_ package in this repo (`INFRA_PREFIXES`).
-- **Version bumps are automatic** (`update.yml`, weekly Monday floor +
+- **Version bumps are automatic** (`update.yml`, daily floor +
   chained after every cascade): `ci/sweep/sweep.py` reads each package's
   `[pkg.updates]` table (`feed = "github-release" | "github-tag" |
   "custom"` + `repo`) and edits specs in place (Release resets only on a
-  real version change; file written only on content change). Custom feeds
+  real version change; file written only on content change; a feed that
+  would downgrade a spec is refused). The bumped specs are then built via
+  `ci/sweep/drift.py`, which dispatches only packages ahead of Copr. Custom feeds
   live in `ci/sweep/custom.py`. Default mode commits bumps straight to
   main (self-healing: a failed build leaves the published version
   untouched); set the `UPDATE_MODE` repo variable to `pr` for a review
@@ -113,19 +115,18 @@ mock -r /tmp/copr.cfg <srpm>
   - `install -t DIR SRC` keeps SRC's basename — `%files` must claim the
     name as installed. Prefer explicit
     `install -Dm644 SRC %{buildroot}%{dir}/NAME`.
-- `repo/` carries the consumer drop-ins for **all six** group repos —
-  repoclosure installs all of them and checks THIS repo's project against
-  the union, exactly what a halcyon-image consumer sees. The
-  *_mirror.repo alternative is never installed by CI.
+- `repo/` carries this repo's consumer drop-in (`cli-tools.repo`) —
+  repoclosure installs it and checks THIS repo's project against Fedora,
+  Terra and the lionheartp bootstrap repo, as a consumer sees it.
 - **CI authentication**: the `COPR_CLICONF` GitHub secret drives every
   copr-cli step. The Copr API token expires — a wave of 401s in
   copr-build.yml means: regenerate at
   <https://copr.fedorainfracloud.org/api/>, re-set the secret, re-run.
 
-- **Rust packages build from source with the terra rust2rpm macro set**
-  (`anda-srpm-macros` from Terra + `cargo-rpm-macros` from Fedora;
-  `starship` is the reference). Don't put the crates.io URL macro in
-  `Source:` — spell out the static.crates.io URL (sources are fetched
+- **Rust packages build from source with an inline online-cargo prep**
+  (`cargo-rpm-macros` from Fedora plus the config block each spec carries
+  in its prep stage; `starship` is the reference). Don't put the crates.io
+  URL macro in `Source:` — spell out the static.crates.io URL (sources are fetched
   before the buildroot macros exist). `-- --locked` on the install macro
   (cargo re-resolution breaks drifted crates), undefine the shebang
   mangler (vendored crate sources trip the debugsource scan), and

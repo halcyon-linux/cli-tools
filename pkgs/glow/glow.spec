@@ -10,8 +10,9 @@
 #     on purpose: rpm expands macros even inside comments, and autochangelog
 #     outside dist-git expands to a multi-line blob that breaks spec parsing
 #     (no dist-git context in Copr)
-# Bump procedure: take Fedora's matching new version AND its new vendor
-# tarball — update Version, the Source1 hash and filename together.
+# Bump procedure: automatic — ci/sweep custom_glow tracks Fedora rawhide's
+# Version, the Source1 lookaside hash and go-vendor-tools.toml together
+# (a manual bump must update all three at once as well).
 %bcond check 1
 
 %define debug_package %{nil}

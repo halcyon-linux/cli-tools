@@ -5,10 +5,8 @@ Summary:        Universal markup converter (upstream release binary)
 License:        GPL-2.0-or-later
 URL:            https://github.com/jgm/pandoc
 Source0:        %{url}/releases/download/%{version}/pandoc-%{version}-linux-amd64.tar.gz
-#!RemoteAsset
 Source1:        %{url}/raw/%{version}/COPYING.md
 ExclusiveArch: x86_64
-BuildRequires:  curl
 %description
 Pandoc converts between markup formats, from the upstream release binary —
 packaged because Fedora's pandoc is not continuously updated.

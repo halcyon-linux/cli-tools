@@ -1,8 +1,8 @@
-"""Upstream version feeds for the sweeper — the port of andax's gh()/gh_tag()
-/gh_commit()/get()/get_json()/find() helpers.
+"""Upstream version feeds for the sweeper: GitHub release/tag lookups plus
+the fetch/JSON/regex helpers the custom feeds in custom.py build on.
 
 Only the stdlib (urllib) is used; every GitHub call carries GITHUB_TOKEN when
-the environment provides one, exactly like the rhai helpers did.
+the environment provides one.
 """
 
 from __future__ import annotations
@@ -25,16 +25,10 @@ GITHUB_API = "https://api.github.com"
 ALLOWED_HOSTS = frozenset({
     "api.github.com",
     "github.com",
-    "raw.githubusercontent.com",
     "sourceforge.net",
-    "aur.archlinux.org",
-    "download.zotero.org",
-    "ftp.gnu.org",
     "registry.npmjs.org",
     "opencode.ai",
-    "www.opencode.net",
-    "mullvad.net",
-    "repo.protonvpn.com",
+    "src.fedoraproject.org",
 })
 
 
@@ -137,9 +131,9 @@ def find_group(pattern: str, text: str, group: int = 1, dotall: bool = False) ->
 
 def github_release_tag(repo: str) -> str:
     """gh() port: the tag of the repo's latest release (newest non-draft,
-    non-prerelease), RAW — andax does not strip the leading `v` (verified:
-    the sdbus-c++ sweep wrote v2.3.1). Callers that want an unprefixed
-    version strip it themselves (rpm.version() does for Version lines)."""
+    non-prerelease), RAW — the leading `v` is not stripped. Callers that
+    want an unprefixed version strip it themselves (set_version does for
+    Version lines)."""
     data = fetch_json(f"{GITHUB_API}/repos/{repo}/releases/latest")
     return data["tag_name"]
 
@@ -156,8 +150,8 @@ def _next_link(link: str) -> str:
 
 def github_tag_names(repo: str) -> list[str]:
     """Every tag name of `repo`, raw, across ALL pagination pages. Split out
-    of github_latest_tag so custom feeds can rank the full tag set — zotero-class
-    repos carry hundreds of tags and GitHub's /tags ordering is not
+    of github_latest_tag so custom feeds can rank the full tag set — repos with
+    hundreds of tags exist and GitHub's /tags ordering is not
     newest-first, so a single page could miss the newest tag."""
     names: list[str] = []
     url: str | None = f"{GITHUB_API}/repos/{repo}/tags?per_page=100"
@@ -173,7 +167,7 @@ def github_tag_names(repo: str) -> list[str]:
 def github_latest_tag(repo: str) -> str:
     """gh_tag() port: the newest git tag (releases or not), leading `v`
     stripped. The per-name v-strip before comparing is not cosmetic:
-    Hyprland's tag set mixes `v0.56.2` with an ancient unprefixed
+    a repo's tag set can mix `v0.56.2` with an ancient unprefixed
     `0.1.0-beta`, and rpmvercmp ranks a leading digit over a leading letter —
     comparing raw names picks the prehistoric tag.
     Empty when the repo has no tags — callers treat that as 'stay on the
@@ -189,15 +183,3 @@ def github_latest_tag(repo: str) -> str:
         if not best or rpmvercmp(stripped, best) > 0:
             best = stripped
     return best
-
-
-def github_commit(repo: str, ref: str = "") -> str:
-    """gh_commit() port: the tip commit of the default branch (or `ref`).
-    Without a ref the commits endpoint returns a LIST — take its head."""
-    data = fetch_json(
-        f"{GITHUB_API}/repos/{repo}/commits/{ref}" if ref
-        else f"{GITHUB_API}/repos/{repo}/commits"
-    )
-    return (data[0] if isinstance(data, list) else data)["sha"]
-
-

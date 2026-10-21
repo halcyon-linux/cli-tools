@@ -15,9 +15,7 @@ Summary:        A cross-platform, multi-language package manager and workflow to
 # code under its own licenses (see terra's pixi.spec for the full SPDX dump)
 License:        BSD-3-Clause
 URL:            https://pixi.sh
-#!RemoteAsset
 Source0:        https://github.com/prefix-dev/pixi/releases/download/v%{version}/pixi-x86_64-unknown-linux-musl.tar.gz
-#!RemoteAsset
 Source1:        https://raw.githubusercontent.com/prefix-dev/pixi/v%{version}/LICENSE
 
 ExclusiveArch:  x86_64

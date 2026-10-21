@@ -16,9 +16,7 @@ Summary:        Markdown LSP server providing completion, goto and diagnostics
 
 License:        MIT
 URL:            https://github.com/artempyanykh/marksman
-#!RemoteAsset
 Source0:        %{url}/releases/download/%{markstag}/marksman-linux-x64
-#!RemoteAsset
 Source1:        %{url}/raw/%{markstag}/LICENSE
 
 ExclusiveArch:  x86_64

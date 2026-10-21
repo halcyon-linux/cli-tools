@@ -2,20 +2,17 @@
 """ci/sweep — the halcyon-packages upstream version sweeper (specs live
 under pkgs/<name>/).
 
-The Python replacement for `anda update` + the 48 update.rhai scripts (the
-anda migration). Reads each registered package's [pkg.updates] table from
+Reads each registered package's [pkg.updates] table from
 ci/packages.toml, asks the configured feed for the latest upstream version,
-edits the spec in place (ci/sweep/spec.py has the exact anda semantics) and
-reports what changed. The update workflow commits the result — straight to
+edits the spec in place (see ci/sweep/spec.py) and reports what changed. The update workflow commits the result — straight to
 main (default) or onto a bump branch — and the push makes copr-build.yml
 rebuild the changed packages plus every higher batch.
 
 Feed types:
   github-release  latest GitHub release tag of `repo` (leading v stripped)
   github-tag      newest git tag of `repo` (releases or not)
-  custom          feeds.custom.custom_<name>() — the ported rhai logic
-Packages without an [pkg.updates] table (the texlive-* rolling groups,
-snapshot by tools/texlive-splitter) are never swept.
+  custom          custom.custom_<name>() in ci/sweep/custom.py
+Packages without an [pkg.updates] table are never swept.
 
 Usage:
   ci/sweep/sweep.py [--pkg NAME ...] [--dry-run] [--list]
@@ -28,8 +25,10 @@ from __future__ import annotations
 
 import argparse
 import os
+import shutil
 import subprocess
 import sys
+import tempfile
 import tomllib
 from pathlib import Path
 
@@ -56,7 +55,7 @@ def load_swept() -> dict[str, tuple[dict, Path, Path]]:
     for name, entry in data.items():
         updates = entry.get("updates")
         if not updates:
-            continue  # texlive-* etc: rolled by texlive-update.yml, never swept
+            continue  # no feed configured: never swept
         base = REPO_ROOT / "pkgs" / name
         spec_path = base / f"{name}.spec"
         if not spec_path.is_file():
@@ -65,8 +64,16 @@ def load_swept() -> dict[str, tuple[dict, Path, Path]]:
     return swept
 
 
-def sweep_one(name: str, updates: dict, spec_path: Path, base: Path) -> tuple[bool, str, str]:
-    """Sweep one package. Returns (wrote, old_version, new_version)."""
+def sweep_one(name: str, updates: dict, spec_path: Path, base: Path,
+              dry_run: bool = False) -> tuple[bool, str, str]:
+    """Sweep one package. Returns (wrote, old_version, new_version). A dry run
+    sweeps a scratch copy of the package dir, so nothing in the repo changes
+    (custom feeds may write sidecar files next to the spec)."""
+    if dry_run:
+        with tempfile.TemporaryDirectory(prefix=f"sweep-{name}-") as scratch:
+            shutil.copytree(base, scratch, dirs_exist_ok=True)
+            return sweep_one(name, updates, Path(scratch) / spec_path.name,
+                             Path(scratch))
     import custom as custom_feeds
 
     spec = SpecFile(spec_path)
@@ -110,7 +117,7 @@ def main() -> None:
     for name in names:
         updates, spec_path, base = swept[name]
         try:
-            wrote, old_version, new_version = sweep_one(name, updates, spec_path, base)
+            wrote, old_version, new_version = sweep_one(name, updates, spec_path, base, args.dry_run)
         except (feeds.FeedError, SpecError, OSError, ValueError, KeyError,
                 TypeError, subprocess.SubprocessError) as exc:
             # OSError covers urllib errors, ValueError malformed JSON,

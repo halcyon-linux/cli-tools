@@ -22,14 +22,14 @@
 name: update
 
 on:
-  # two triggers, two purposes: the weekly cron is the floor (sweeps even in
-  # a week with no cascade), and the workflow_run chain sweeps right after
+  # two triggers, two purposes: the daily cron is the floor (sweeps even on
+  # a day with no cascade), and the workflow_run chain sweeps right after
   # every successful copr-build so fresh builds meet the newest upstream
   # immediately. A bump's own cascade re-triggers the sweep once more; that
   # second run finds nothing upstream and exits without committing, so the
   # chain ends.
   schedule:
-    - cron: "17 04 * * 1"
+    - cron: "17 04 * * *"
   workflow_run:
     workflows: [copr-build]
     types: [completed]
@@ -124,9 +124,30 @@ jobs:
             echo "push race (attempt ${attempt}) — rebasing onto origin/main"
           done
           echo "bumped and pushed: ${pkgs}"
-          # a GITHUB_TOKEN push does not trigger workflow runs — dispatch the
-          # cascade explicitly
-          GH_TOKEN="${{ github.token }}" gh workflow run copr-build.yml --ref main
+      # a GITHUB_TOKEN push does not trigger workflow runs, so the cascade is
+      # dispatched explicitly. Instead of rebuilding the whole registry, ask
+      # Copr which packages are behind their specs: that covers the bumps just
+      # pushed AND earlier bumps whose build failed (nothing else retries those)
+      - name: Rebuild packages that are ahead of Copr (mode=commit)
+        if: env.MODE == 'commit' && !cancelled()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          for st in queued in_progress; do
+            n=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/copr-build.yml/runs?status=$st&per_page=1" --jq .total_count)
+            if [ "$n" -gt 0 ]; then
+              echo "a copr-build run is already $st — the chain re-checks when it finishes"
+              exit 0
+            fi
+          done
+          behind="$(python3 ci/sweep/drift.py)"
+          if [ -z "$behind" ]; then
+            echo "Copr is up to date with the specs"
+            exit 0
+          fi
+          echo "ahead of Copr: ${behind}"
+          gh workflow run copr-build.yml --ref main -f only="${behind}"
       - name: Open a bump PR (mode=pr)
         if: env.MODE == 'pr' && success()
         env:

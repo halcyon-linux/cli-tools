@@ -7,11 +7,8 @@ Release:        1%{?dist}
 Summary:        An extremely fast Python package and project manager, written in Rust
 License:        MIT OR Apache-2.0
 URL:            https://docs.astral.sh/uv/
-#!RemoteAsset
 Source0:        https://github.com/astral-sh/uv/releases/download/%{version}/uv-x86_64-unknown-linux-musl.tar.gz
-#!RemoteAsset
 Source1:        https://raw.githubusercontent.com/astral-sh/uv/%{version}/LICENSE-APACHE
-#!RemoteAsset
 Source2:        https://raw.githubusercontent.com/astral-sh/uv/%{version}/LICENSE-MIT
 
 ExclusiveArch:  x86_64

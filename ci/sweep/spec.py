@@ -15,6 +15,8 @@ import re
 import subprocess
 from pathlib import Path
 
+from vercmp import rpmvercmp
+
 _VALUE = r"[^\s]+"  # spec preamble values are single tokens (no spaces)
 
 
@@ -27,10 +29,6 @@ class SpecFile:
         self.path = Path(path)
         self.text = self.path.read_text()
         self._original = self.text
-
-    @property
-    def changed(self) -> bool:
-        return self._original != self.text
 
     def save(self) -> bool:
         """Write back only when the content actually changed (anda's rule)."""
@@ -64,10 +62,16 @@ class SpecFile:
     def set_version(self, version: str, reset_release: bool = True) -> bool:
         """rpm.version() port: strip a leading `v`, rewrite the Version value,
         reset Release to 1%{?dist} — only when the version really changes.
-        Returns whether anything was rewritten."""
+        Returns whether anything was rewritten. A version older than the
+        current one is refused (a stale or wrong feed must never downgrade a
+        package)."""
         version = version.removeprefix("v")
-        if version == self.get_version():
+        current = self.get_version()
+        if version == current:
             return False
+        if rpmvercmp(version, current) < 0:
+            raise SpecError(
+                f"{self.path}: refusing to downgrade {current} -> {version}")
         text = re.sub(
             rf"(?m)^(Version:[ \t]*){_VALUE}",
             lambda m: m.group(1) + version,
@@ -84,29 +88,7 @@ class SpecFile:
         self.text = text
         return True
 
-    def set_snapshot_version(self, base: str, counter: int | None) -> None:
-        """noctalia-style Version rewrite: the whole value token becomes
-        `<base>^<counter>.%{shortcommit}` (counter None = `^1` reset semantics
-        handled by the caller); mirrors the rhai's `Version:\t...` template —
-        a literal tab."""
-        counter = 1 if counter is None else counter
-        value = f"{base}^{counter}.%{{shortcommit}}"
-        self.text, n = re.subn(
-            rf"(?m)^(Version:[ \t]*){_VALUE}",
-            lambda m: m.group(1) + value,
-            self.text,
-            count=1,
-        )
-        if n != 1:
-            raise SpecError(f"{self.path}: no Version: line")
-
     # ---- %global macros ----------------------------------------------------
-
-    def get_global(self, name: str) -> str | None:
-        m = re.search(
-            rf"(?m)^%global[ \t]+{re.escape(name)}[ \t]+([^\n]+)$", self.text
-        )
-        return m.group(1).strip() if m else None
 
     def set_global(self, name: str, value: str) -> bool:
         """rpm.global() port: rewrite the `%global <name> <value>` line in
@@ -129,12 +111,8 @@ class SpecFile:
 
     def _source_pattern(self, n: int) -> str:
         # Source: and Source0: both denote source zero
-        tag = "Source" if n == 0 else f"Source{n}"
+        tag = "Source0?" if n == 0 else f"Source{n}"
         return rf"(?m)^(?P<tag>{tag}:(?P<w>[ \t]*))(?P<val>{_VALUE})"
-
-    def get_source(self, n: int) -> str | None:
-        m = re.search(self._source_pattern(n), self.text)
-        return m.group("val") if m else None
 
     def set_source(self, n: int, url: str) -> bool:
         """rpm.source() port: rewrite the SourceN URL. Returns whether the

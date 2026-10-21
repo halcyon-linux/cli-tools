@@ -5,10 +5,8 @@ Summary:        Simple terminal UI for git commands
 License:        MIT
 URL:            https://github.com/jesseduffield/lazygit
 Source0:        %{url}/releases/download/v%{version}/lazygit_%{version}_Linux_x86_64.tar.gz
-#!RemoteAsset
 Source1:        %{url}/raw/v%{version}/LICENSE
 ExclusiveArch: x86_64
-BuildRequires:  curl
 %description
 A simple terminal UI for git commands, built from the upstream release binary.
 %prep

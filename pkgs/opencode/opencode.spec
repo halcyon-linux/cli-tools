@@ -33,8 +33,7 @@ License:        MIT
 URL:            https://opencode.ai
 Source0:        https://registry.npmjs.org/@opencode%2Fcli-linux-x64/-/cli-linux-x64-%{version}.tgz
 Source1:        https://registry.npmjs.org/@opencode%2Fcli-linux-x64-baseline/-/cli-linux-x64-baseline-%{version}.tgz
-# prebuilt foreign binary: no debug sources to collect
-%define debug_package %{nil}
+# prebuilt foreign binary: no build-id links to create
 %global _build_id_links none
 
 ExclusiveArch: x86_64
