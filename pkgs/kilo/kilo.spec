@@ -12,8 +12,8 @@
 %define __strip /bin/true
 
 Name:           kilo
-Version:        7.8.12
-Release:        2%{?dist}
+Version:        7.8.15
+Release:        1%{?dist}
 Summary:        The AI coding agent built for the terminal
 
 License:        MIT AND LGPL-2.0-or-later
