@@ -12,7 +12,7 @@
 %global crate tealdeer
 
 Name:           tealdeer
-Version:        1.9.0
+Version:        1.9.1
 Release:        1%{?dist}
 Summary:        Fetch and show tldr help pages for many CLI commands
 
