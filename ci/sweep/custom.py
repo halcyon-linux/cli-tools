@@ -7,6 +7,7 @@ stopping the others.
 
 from __future__ import annotations
 
+import gzip
 import re
 from pathlib import Path
 
@@ -90,3 +91,29 @@ def custom_opencode(spec: SpecFile, pkg_dir: Path) -> None:
             "https://registry.npmjs.org/" + scope
             + "%2Fcli-linux-x64-baseline/-/cli-linux-x64-baseline-%{version}.tgz",
         )
+
+
+def custom_claude_code(spec: SpecFile, pkg_dir: Path) -> None:
+    # the official dnf channel is both the artifact source and the version
+    # authority: npm may publish ahead of downloads.claude.ai, the repodata
+    # cannot lie about what the channel serves. The channel keeps a long
+    # tail of old versions — rank every entry with rpmvercmp.
+    channel = "https://downloads.claude.ai/claude-code/rpm/latest/"
+    repomd = feeds.fetch_text(channel + "repodata/repomd.xml")
+    href = feeds.find_group(
+        r'href="(repodata/[^"]*-primary\.xml\.gz)"', repomd)
+    primary = gzip.decompress(feeds.fetch_bytes(channel + href)).decode()
+    versions = set()
+    for entry in primary.split("<package"):
+        if "<name>claude-code</name>" not in entry:
+            continue
+        versions.add(feeds.find_group(r'ver="([^"]+)"', entry))
+    if not versions:
+        raise feeds.FeedError("claude-code missing from the rpm channel")
+    from vercmp import rpmvercmp
+
+    best = ""
+    for version in versions:
+        if not best or rpmvercmp(version, best) > 0:
+            best = version
+    spec.set_version(best)

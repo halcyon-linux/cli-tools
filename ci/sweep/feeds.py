@@ -29,6 +29,7 @@ ALLOWED_HOSTS = frozenset({
     "registry.npmjs.org",
     "opencode.ai",
     "src.fedoraproject.org",
+    "downloads.claude.ai",
 })
 
 
@@ -115,6 +116,11 @@ def fetch_text(url: str) -> str:
 
 def fetch_json(url: str):
     return json.loads(fetch_text(url))
+
+
+def fetch_bytes(url: str) -> bytes:
+    with _open(_get(url)) as resp:
+        return resp.read()
 
 
 def find_group(pattern: str, text: str, group: int = 1, dotall: bool = False) -> str:

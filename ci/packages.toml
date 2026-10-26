@@ -181,6 +181,17 @@ batch = 0
 feed = "custom"
 custom = "kilo"
 
+# claude-code: Anthropic's agentic CLI, vendor rewrap of their own dnf RPM
+# (latest channel). The sweep reads the same channel's repodata it builds
+# from: npm may publish ahead of the artifact, the repodata cannot lie about
+# what the channel serves.
+[claude-code]
+batch = 0
+
+[claude-code.updates]
+feed = "custom"
+custom = "claude-code"
+
 # chafa: terminal graphics, source build ported from Terra.
 [chafa]
 batch = 0
