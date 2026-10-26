@@ -5,7 +5,7 @@
 # gnuplot for non-interactive PNG/SVG output; add qt5-qtbase-devel and drop
 # the --without-qt flag if an interactive qt terminal is ever needed.
 Name:           gnuplot
-Version:        6.0.5
+Version:        6.0.6
 Release:        1%{?dist}
 %define debug_package %{nil}
 Summary:        Program for plotting functions and data
