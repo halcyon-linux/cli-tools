@@ -41,13 +41,16 @@ batch = 0
 feed = "github-release"
 repo = "astral-sh/uv"
 
-# atuin: Rust source build (crates.io).
+# atuin: Rust source build (crates.io). The sweep tracks the crates.io
+# registry, not the GitHub release tag: upstream can release on GitHub while
+# the matching crate is yanked/unpublished (18.24.2 was), and the spec can
+# only build versions crates.io actually serves.
 [atuin]
 batch = 0
 
 [atuin.updates]
-feed = "github-release"
-repo = "atuinsh/atuin"
+feed = "custom"
+custom = "atuin"
 
 # bat: Rust source build (crates.io); binary only.
 [bat]

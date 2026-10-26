@@ -117,3 +117,25 @@ def custom_claude_code(spec: SpecFile, pkg_dir: Path) -> None:
         if not best or rpmvercmp(version, best) > 0:
             best = version
     spec.set_version(best)
+
+
+def custom_atuin(spec: SpecFile, pkg_dir: Path) -> None:
+    # the spec builds from the crates.io .crate, and crates.io does not
+    # always serve the version a GitHub release names: 18.24.2 was
+    # unpublished upstream (API 404, static URL 403) while the GH tag stayed
+    # up, pinning the spec to a version the registry refuses to serve —
+    # every rebuild 403'd at spectool. Track the newest version crates.io
+    # lists as not yanked; deleted versions drop out of the list entirely.
+    data = feeds.fetch_json("https://crates.io/api/v1/crates/atuin/versions")
+    from vercmp import rpmvercmp
+
+    best = ""
+    for v in data["versions"]:
+        if v["yanked"]:
+            continue
+        num = v["num"]
+        if not best or rpmvercmp(num, best) > 0:
+            best = num
+    if not best:
+        raise feeds.FeedError("atuin: no servable version on crates.io")
+    spec.set_version(best)

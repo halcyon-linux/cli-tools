@@ -30,6 +30,7 @@ ALLOWED_HOSTS = frozenset({
     "opencode.ai",
     "src.fedoraproject.org",
     "downloads.claude.ai",
+    "crates.io",
 })
 
 

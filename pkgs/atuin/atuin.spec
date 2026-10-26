@@ -12,7 +12,7 @@
 %global crate atuin
 
 Name:           atuin
-Version:        18.24.2
+Version:        18.24.1
 Release:        1%{?dist}
 Summary:        Atuin - magical shell history
 
@@ -104,6 +104,11 @@ export SCCACHE_DIR=/sccache
 %endif
 
 %changelog
+* Mon Oct 26 2026 ahsan <aahsnr041@proton.me> - 18.24.1-1
+- downgrade from 18.24.2: upstream unpublished the 18.24.2 crate (crates.io
+  API 404s it and static.crates.io 403s the file), so every rebuild of the
+  spec failed spectool's fetch; the sweep now tracks the newest version
+  crates.io actually serves instead of the GitHub release tag
 * Fri Sep 25 2026 ahsan <aahsnr041@proton.me> - 18.23.0-1
 - source build with the terra rust2rpm macro set (was: prebuilt-binary
   wrapper over the release binary)
