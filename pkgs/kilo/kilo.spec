@@ -12,7 +12,7 @@
 %define __strip /bin/true
 
 Name:           kilo
-Version:        7.8.17
+Version:        7.8.18
 Release:        1%{?dist}
 Summary:        The AI coding agent built for the terminal
 
