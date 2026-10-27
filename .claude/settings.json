@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./TODO.md)",
+      "Read(./notes/**)",
+      "Read(./AGENTS.md)",
+      "Read(./_srpms/**)",
+      "Read(./tmp/**)",
+      "Read(./.mimosa/**)",
+      "Read(./.obsidian/**)",
+      "Read(./TaskNotes/**)",
+      "Read(./.cache/**)",
+      "Read(./.zcode/**)",
+      "Read(./.zcodeignore)",
+      "Read(./**/__pycache__/**)",
+      "Read(./**/*.tar.gz)",
+      "Read(./**/*.tar.bz2)",
+      "Read(./**/*.rpm)",
+      "Read(./**/*.zst)"
+    ]
+  }
+}

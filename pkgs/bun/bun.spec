@@ -10,6 +10,7 @@
 #     spec is otherwise upstream verbatim.
 %define debug_package %{nil}
 %global _build_id_links none
+%global __os_install_post %{nil}
 %ifarch x86_64
 %global a x64-baseline
 %elifarch aarch64
@@ -23,7 +24,7 @@
 
 Name:		bun
 Version:		1.4.4
-Release:		1%{?dist}
+Release:		2%{?dist}
 Summary:		Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 License:		MIT
 URL:			https://bun.sh
@@ -89,5 +90,7 @@ install -Dm644 %{SOURCE1} %{buildroot}%{_datadir}/metainfo/sh.oven.bun.metainfo.
 %{_datadir}/fish/vendor_completions.d/bun.fish
 
 %changelog
+* Tue Oct 27 2026 ahsan <aahsnr041@proton.me> - 1.4.4-2
+- disable the post-install optimizations (full nil set for a foreign binary)
 * Sat Sep 26 2026 halcyon-autoupdate <aahsnr041@proton.me> - 1.4.2-1
 - changelog retro-added (the spec predates the written-changelog rule)

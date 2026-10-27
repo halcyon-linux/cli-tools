@@ -66,6 +66,10 @@ class SpecFile:
         current one is refused (a stale or wrong feed must never downgrade a
         package)."""
         version = version.removeprefix("v")
+        # a hyphen or whitespace is illegal in an rpm Version: (a tag like
+        # 3.5.0-rc1 must fail the feed, not corrupt the spec)
+        if not version or re.search(r"[\s-]", version):
+            raise SpecError(f"{self.path}: refusing invalid version {version!r}")
         current = self.get_version()
         if version == current:
             return False

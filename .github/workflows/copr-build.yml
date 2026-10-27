@@ -41,6 +41,7 @@ on:
 permissions:
   contents: read
   packages: read
+  actions: read # validate lists workflow runs
 
 concurrency:
   group: copr-build-${{ github.ref }}
@@ -253,7 +254,7 @@ jobs:
     name: "wait for batch 0"
     needs: [manifest, submit0]
     # empty wave: pass through green; failed submit: skipped (halts the chain)
-    if: always() && (needs.manifest.outputs.batch0 == '' || needs.submit0.result == 'success')
+    if: always() && needs.manifest.result == 'success' && (needs.manifest.outputs.batch0 == '' || needs.submit0.result == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 330
     container:

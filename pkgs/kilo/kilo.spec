@@ -13,7 +13,7 @@
 
 Name:           kilo
 Version:        7.8.18
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The AI coding agent built for the terminal
 
 License:        MIT AND LGPL-2.0-or-later
@@ -38,7 +38,10 @@ a built-in web console and tree-sitter grammars for its code intelligence.
 install -d %{buildroot}%{_libdir}/%{name} %{buildroot}%{_bindir}
 install -pm0755 kilo %{buildroot}%{_libdir}/%{name}/kilo
 install -pm0755 bwrap %{buildroot}%{_libdir}/%{name}/bwrap
+install -pm0755 kilo-sandbox-seccomp %{buildroot}%{_libdir}/%{name}/kilo-sandbox-seccomp
 install -pm0644 kilo-sandbox-mutation-worker.js %{buildroot}%{_libdir}/%{name}/
+install -pm0644 kilo-sandbox-network-relay.js %{buildroot}%{_libdir}/%{name}/
+cp -a console %{buildroot}%{_libdir}/%{name}/console
 cp -a tree-sitter %{buildroot}%{_libdir}/%{name}/tree-sitter
 # the wrapper pins the grammar dir; the sandbox helpers are resolved
 # relative to the real binary
@@ -64,6 +67,9 @@ echo "$out" | grep -qF '%{version}'
 %{_libdir}/%{name}/
 
 %changelog
+* Tue Oct 27 2026 ahsan <aahsnr041@proton.me> - 7.8.18-2
+- install the seccomp and network-relay sandbox helpers and the console web UI
+  that the release tarball ships next to the binary
 * Thu Oct 22 2026 ahsan <aahsnr041@proton.me> - 7.8.12-2
 - disable the post-install optimizations that corrupted the bun-compiled
   binary (it ran as the bare bun CLI) and add a version check in the check stage

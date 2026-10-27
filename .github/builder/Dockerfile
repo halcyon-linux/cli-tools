@@ -8,7 +8,7 @@ FROM registry.fedoraproject.org/fedora-minimal:44
 # The post-anda image: CI runs the version sweeper (ci/sweep/sweep.py),
 # generates SRPMs (spectool + rpmbuild -bs) and drives Copr (copr-cli) in
 # here. mock is included for LOCAL builds against a `copr-cli mock-config`
-# buildroot (see AGENTS.md); CI itself never builds in a chroot. The stock
+# buildroot (see CLAUDE.md); CI itself never builds in a chroot. The stock
 # /etc/yum.repos.d/fedora*.repo keep providing Fedora 44 + updates.
 
 RUN dnf up -y && \

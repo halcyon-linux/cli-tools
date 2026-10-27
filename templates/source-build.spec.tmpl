@@ -6,6 +6,7 @@
 # repo matches terra's spec conventions).
 # Registration: add the package to ci/packages.toml (batch + [pkg.updates]
 # sweep feed) — a package without an entry is never built.
+%define debug_package %{nil}
 Name:           <pkg>
 Version:        0.1.0
 Release:        1%{?dist}

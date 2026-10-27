@@ -3,7 +3,7 @@
 # Terra's go2rpm macro machinery — this repo ships bin-only Go packages.
 Name:           asdf
 Version:        0.20.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 %define debug_package %{nil}
 Summary:        Extendable version manager with support for Ruby, Node.js, Elixir, Erlang & more
 
@@ -12,6 +12,9 @@ URL:            https://github.com/asdf-vm/asdf
 Source0:        %{url}/archive/v%{version}/asdf-%{version}.tar.gz
 
 BuildRequires:  golang
+
+Requires:       git
+Requires:       curl
 
 %description
 Extendable version manager with support for Ruby, Node.js, Elixir, Erlang
@@ -37,5 +40,7 @@ install -m 0755 asdf %{buildroot}%{_bindir}/asdf
 %{_bindir}/asdf
 
 %changelog
+* Tue Oct 27 2026 ahsan <aahsnr041@proton.me> - 0.20.2-2
+- add the missing runtime dependencies
 * Mon Sep 28 2026 ahsan <aahsnr041@proton.me> - 0.20.2-1
 - initial package (Go source build, house nwg-look pattern)

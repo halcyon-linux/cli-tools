@@ -171,6 +171,12 @@ def github_tag_names(repo: str) -> list[str]:
     return names
 
 
+def is_prerelease(version: str) -> bool:
+    """A hyphen (3.5.0-rc1) or an alpha/beta/rc marker: never a Version:
+    a spec may track (set_version refuses a hyphen outright)."""
+    return bool(re.search(r"-|(?i:alpha|beta|rc\d)", version))
+
+
 def github_latest_tag(repo: str) -> str:
     """gh_tag() port: the newest git tag (releases or not), leading `v`
     stripped. The per-name v-strip before comparing is not cosmetic:
@@ -178,7 +184,7 @@ def github_latest_tag(repo: str) -> str:
     `0.1.0-beta`, and rpmvercmp ranks a leading digit over a leading letter —
     comparing raw names picks the prehistoric tag.
     Empty when the repo has no tags — callers treat that as 'stay on the
-    current version base'."""
+    current version base' (prerelease tags are skipped)."""
     names = github_tag_names(repo)
     if not names:
         return ""
@@ -187,6 +193,8 @@ def github_latest_tag(repo: str) -> str:
     best = ""
     for name in names:
         stripped = name.removeprefix("v")
+        if is_prerelease(stripped):
+            continue
         if not best or rpmvercmp(stripped, best) > 0:
             best = stripped
     return best

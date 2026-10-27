@@ -12,7 +12,7 @@
 
 Name:           yazi
 Version:        26.9.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Blazing fast terminal file manager
 # aggregate expression is Terra's for the same upstream version (unbalanced
 # paren in their expression fixed) — the per-crate dump ships as
@@ -27,6 +27,8 @@ BuildRequires:  mold
 # compilation cache server — its cache dir lives on the workspace via the
 # mock config's bind mount, shared across all rust source builds
 BuildRequires:  sccache
+
+Requires:       file
 
 %description
 Yazi (means "duck") is a terminal file manager written in Rust, based on
@@ -102,6 +104,8 @@ install -Dpm644 assets/yazi.desktop \
 
 
 %changelog
+* Tue Oct 27 2026 ahsan <aahsnr041@proton.me> - 26.9.1-2
+- add the missing runtime dependencies
 * Thu Sep 24 2026 ahsan <aahsnr041@proton.me> - 26.9.1-1
 - source build with the terra cargo macro set, matching Terra's yazi.spec
   (was: prebuilt-binary wrapper over the release zip)

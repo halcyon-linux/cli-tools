@@ -131,9 +131,9 @@ def custom_atuin(spec: SpecFile, pkg_dir: Path) -> None:
 
     best = ""
     for v in data["versions"]:
-        if v["yanked"]:
-            continue
         num = v["num"]
+        if v["yanked"] or feeds.is_prerelease(num):
+            continue
         if not best or rpmvercmp(num, best) > 0:
             best = num
     if not best:

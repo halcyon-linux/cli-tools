@@ -3,7 +3,7 @@
 # binary at build time — the static musl binary runs anywhere.
 Name:           uv
 Version:        0.13.6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        An extremely fast Python package and project manager, written in Rust
 License:        MIT OR Apache-2.0
 URL:            https://docs.astral.sh/uv/
@@ -16,6 +16,7 @@ ExclusiveArch:  x86_64
 # prebuilt foreign binary: nothing to produce debug symbols from
 %define debug_package %{nil}
 %global _build_id_links none
+%global __os_install_post %{nil}
 
 %description
 uv is an extremely fast Python package and project manager, written in Rust:
@@ -57,6 +58,8 @@ install -Dpm644 uvx.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/uvx.f
 %{_datadir}/fish/vendor_completions.d/uvx.fish
 
 %changelog
+* Tue Oct 27 2026 ahsan <aahsnr041@proton.me> - 0.13.6-2
+- disable the post-install optimizations (full nil set for a foreign binary)
 * Fri Sep 25 2026 halcyon-autobump <aahsnr041@proton.me>
 - back to the wrapper over the official musl release tarball (was: rust
   source build with the terra cargo macro set)

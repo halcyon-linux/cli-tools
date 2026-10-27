@@ -1,6 +1,6 @@
 Name:           pandoc
 Version:	3.13
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Universal markup converter (upstream release binary)
 License:        GPL-2.0-or-later
 URL:            https://github.com/jgm/pandoc
@@ -14,6 +14,7 @@ packaged because Fedora's pandoc is not continuously updated.
 %setup -q -c -T -a 0
 %define debug_package %{nil}
 %global _build_id_links none
+%global __os_install_post %{nil}
 %install
 # vendor tarballs ship no license text; the repo LICENSE rides along
 install -Dpm0644 %{SOURCE1} %{buildroot}%{_licensedir}/%{name}/COPYING.md
@@ -22,5 +23,7 @@ install -Dm0755 pandoc-%{version}/bin/pandoc %{buildroot}%{_bindir}/pandoc
 %license COPYING.md
 %{_bindir}/pandoc
 %changelog
+* Tue Oct 27 2026 ahsan <aahsnr041@proton.me> - 3.13-2
+- disable the post-install optimizations (full nil set for a foreign binary)
 * Sat Sep 19 2026 halcyon-autobuild - 3.11-1
 - packaged from upstream release binary

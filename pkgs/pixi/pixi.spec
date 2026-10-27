@@ -7,9 +7,10 @@
 # time.
 %define debug_package %{nil}
 %global _build_id_links none
+%global __os_install_post %{nil}
 Name:           pixi
 Version:        0.83.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A cross-platform, multi-language package manager and workflow tool
 # pixi itself is BSD-3-Clause; the static binary also embeds Rust dependency
 # code under its own licenses (see terra's pixi.spec for the full SPDX dump)
@@ -48,6 +49,8 @@ install -Dpm644 pixi.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/pixi
 %{_datadir}/fish/vendor_completions.d/pixi.fish
 
 %changelog
+* Tue Oct 27 2026 ahsan <aahsnr041@proton.me> - 0.83.0-2
+- disable the post-install optimizations (full nil set for a foreign binary)
 * Fri Sep 25 2026 ahsan <aahsnr041@proton.me> - 0.81.0-2
 - back to the official musl binary wrapper: the CI source build hung in the
   sccache/rustc layer and even healthy costs 1-2h on CI runners

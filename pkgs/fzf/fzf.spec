@@ -3,10 +3,11 @@
 # page and license come from the tag tarball (Source1).
 %define debug_package %{nil}
 %global _build_id_links none
+%global __os_install_post %{nil}
 
 Name:           fzf
 Version:        0.74.5
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A command-line fuzzy finder
 
 License:        MIT
@@ -58,6 +59,8 @@ install -Dpm0644 README.md %{buildroot}%{_docdir}/%{name}/README.md
 %{_datadir}/fish/vendor_completions.d/fzf.fish
 
 %changelog
+* Tue Oct 27 2026 ahsan <aahsnr041@proton.me> - 0.74.5-2
+- disable the post-install optimizations (full nil set for a foreign binary)
 * Sat Sep 26 2026 halcyon-autoupdate <aahsnr041@proton.me> - 0.74.4-1
 - initial packaging (release-binary wrapper; shadows Fedora's identical
   version so updates land here first)

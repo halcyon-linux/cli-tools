@@ -9,7 +9,7 @@
 # RPM-installed --version printed the bun banner while the unstripped
 # curl-installer copy of the same code printed "opencode v2.0.24"). So:
 #   - every brp optimization that touches the file is disabled below
-#   - the binaries live OFF PATH under %{_libexecdir}/opencode/
+#   - the binaries live OFF PATH under the libexec directory (opencode/)
 #   - /usr/bin/opencode is wired via update-alternatives
 #     (plain = priority 100, x64-baseline = 90 — VMs and older CPUs need the
 #     baseline build; upstream publishes both on npm)
@@ -18,6 +18,7 @@
 # package/bin/opencode from — one per variant, version swept from
 # https://opencode.ai/update/api/latest/cli/npm via ci/sweep/custom.py.
 %global debug_package %{nil}
+%global __os_install_post %{nil}
 %define __strip /bin/true
 %define __brp_strip /bin/true
 %define __brp_strip_comment_note /bin/true
@@ -27,7 +28,7 @@
 
 Name:           opencode
 Version:        2.2.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        AI coding agent for the terminal
 License:        MIT
 URL:            https://opencode.ai
@@ -37,6 +38,10 @@ Source1:        https://registry.npmjs.org/@opencode%2Fcli-linux-x64-baseline/-/
 %global _build_id_links none
 
 ExclusiveArch: x86_64
+
+Requires(post):   alternatives
+Requires(postun): alternatives
+
 %description
 AI coding agent built for the terminal, from the upstream v2 release binary
 (bun-compiled, fully self-contained — no Bun or Node.js runtime required).
@@ -81,11 +86,15 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %files
+%ghost %{_bindir}/opencode
 %dir %{_libexecdir}/opencode
 %{_libexecdir}/opencode/opencode
 %{_libexecdir}/opencode/opencode-baseline
 
 %changelog
+* Tue Oct 27 2026 ahsan <aahsnr041@proton.me> - 2.2.0-2
+- require alternatives for the post scripts, own the alternatives link as a
+  ghost file, disable every post-install step
 * Tue Oct 07 2026 ahsan <aahsnr041@proton.me> - 2.0.24-1
 - borrow ferdiu/opencode-sandbox-copr's packaging for v2: disable every brp
   step that mangles bun-compiled binaries, install both npm variants (plain +
