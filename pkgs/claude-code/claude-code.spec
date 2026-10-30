@@ -14,7 +14,7 @@
 %define __strip /bin/true
 
 Name:           claude-code
-Version:        2.1.312
+Version:        2.1.314
 Release:        1%{?dist}
 Summary:        Agentic coding tool that lives in the terminal
 # proprietary: Anthropic PBC, all rights reserved — the legal agreements ship
