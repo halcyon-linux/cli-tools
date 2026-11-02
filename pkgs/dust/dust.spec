@@ -12,7 +12,7 @@
 %global crate du-dust
 
 Name:           dust
-Version:        1.2.6
+Version:        1.2.7
 Release:        1%{?dist}
 Summary:        More intuitive version of du
 
