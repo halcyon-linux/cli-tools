@@ -10,7 +10,7 @@
 %global crate fd-find
 
 Name:           fd-find
-Version:        10.5.0
+Version:        10.5.1
 Release:        1%{?dist}
 Summary:        Simple, fast and user-friendly alternative to find
 

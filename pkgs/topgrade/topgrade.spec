@@ -14,7 +14,7 @@
 %global crate topgrade
 
 Name:           topgrade
-Version:        17.14.1
+Version:        17.15.0
 Release:        1%{?dist}
 Summary:        Upgrade all the things
 
