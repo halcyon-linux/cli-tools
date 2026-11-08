@@ -1,6 +1,6 @@
 Name:           lazygit
-Version:	0.66.2
-Release:        2%{?dist}
+Version:	0.66.3
+Release:        1%{?dist}
 Summary:        Simple terminal UI for git commands
 License:        MIT
 URL:            https://github.com/jesseduffield/lazygit

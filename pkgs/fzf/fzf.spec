@@ -6,8 +6,8 @@
 %global __os_install_post %{nil}
 
 Name:           fzf
-Version:        0.74.5
-Release:        2%{?dist}
+Version:        0.75.0
+Release:        1%{?dist}
 Summary:        A command-line fuzzy finder
 
 License:        MIT
