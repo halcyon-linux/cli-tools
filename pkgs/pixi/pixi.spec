@@ -9,7 +9,7 @@
 %global _build_id_links none
 %global __os_install_post %{nil}
 Name:           pixi
-Version:        0.84.1
+Version:        0.84.2
 Release:        1%{?dist}
 Summary:        A cross-platform, multi-language package manager and workflow tool
 # pixi itself is BSD-3-Clause; the static binary also embeds Rust dependency
