@@ -1,6 +1,6 @@
 Name:           pandoc
-Version:	3.13
-Release:        2%{?dist}
+Version:	3.14
+Release:        1%{?dist}
 Summary:        Universal markup converter (upstream release binary)
 License:        GPL-2.0-or-later
 URL:            https://github.com/jgm/pandoc
