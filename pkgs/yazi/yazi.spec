@@ -1,7 +1,7 @@
 # Source build following Terra's yazi.spec: the yazi workspace is not
 # published to crates.io as an installable crate, so the source is the release
 # tag tarball and the dependency tree is vendored over the network at build
-# time (cargo-rpm-macros, in Fedora 44). The vergen
+# time (cargo-rpm-macros, in Fedora 45). The vergen
 # build script needs a git sha injected — GitHub tag tarballs carry no .git.
 # Was: prebuilt-binary wrapper over the official gnu release zip.
 %undefine __brp_mangle_shebangs

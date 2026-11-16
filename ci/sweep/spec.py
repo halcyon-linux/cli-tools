@@ -47,7 +47,7 @@ class SpecFile:
         if val.startswith("%"):
             try:
                 proc = subprocess.run(
-                    ["rpmspec", "-D", "fedora 44", "-q", "--qf", "%{version}\\n", str(self.path)],
+                    ["rpmspec", "-D", "fedora 45", "-q", "--qf", "%{version}\\n", str(self.path)],
                     capture_output=True,
                     text=True,
                     check=True,

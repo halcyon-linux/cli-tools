@@ -36,6 +36,6 @@ jobs:
           context: .
           file: .github/builder/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ghcr.io/halcyon-linux/cli-tools-builder:f44
+          tags: ghcr.io/halcyon-linux/cli-tools-builder:f45
           cache-from: type=gha
           cache-to: type=gha,mode=max

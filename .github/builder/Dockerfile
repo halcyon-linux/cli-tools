@@ -1,4 +1,4 @@
-FROM registry.fedoraproject.org/fedora-minimal:44
+FROM registry.fedoraproject.org/fedora-minimal:45
 
 # Build context: the repository root (docker build -f .github/builder/Dockerfile .)
 # Rebuilt automatically by .github/workflows/builder-docker.yml whenever
@@ -9,7 +9,7 @@ FROM registry.fedoraproject.org/fedora-minimal:44
 # generates SRPMs (spectool + rpmbuild -bs) and drives Copr (copr-cli) in
 # here. mock is included for LOCAL builds against a `copr-cli mock-config`
 # buildroot (see CLAUDE.md); CI itself never builds in a chroot. The stock
-# /etc/yum.repos.d/fedora*.repo keep providing Fedora 44 + updates.
+# /etc/yum.repos.d/fedora*.repo keep providing Fedora 45 + updates.
 
 RUN dnf up -y && \
     dnf swap -y systemd-standalone-sysusers systemd && \

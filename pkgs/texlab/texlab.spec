@@ -3,7 +3,7 @@
 # 2022; upstream says to build from the git tag with --locked), so the source
 # is the release tag tarball and the dependency tree is fetched over the
 # network at build time (anda-srpm-macros + cargo-rpm-macros, both in
-# Fedora 44). Pure-Rust dependency set: no openssl, no protoc, no C toolchain
+# Fedora 45). Pure-Rust dependency set: no openssl, no protoc, no C toolchain
 # deps; the committed Cargo.lock keeps the build --locked-stable.
 %undefine __brp_mangle_shebangs
 %define debug_package %{nil}
