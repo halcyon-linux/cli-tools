@@ -51,6 +51,7 @@ A terminal workspace with batteries included.}
 %license LICENSE.dependencies
 %doc README.md
 %{_bindir}/zellij
+%{_bindir}/zellij-terminal
 
 
 %prep
@@ -102,6 +103,9 @@ export SCCACHE_DIR=/sccache
 %install
 export SCCACHE_DIR=/sccache
 %cargo_install -- --locked
+# cargo_install copies the crate source into the registry for a -devel
+# subpackage; this package ships the binaries only.
+rm -rf %{buildroot}%{_datadir}/cargo/registry/%{crate}-%{version}
 
 %if %{with check}
 %check
@@ -109,6 +113,8 @@ export SCCACHE_DIR=/sccache
 %endif
 
 %changelog
+* Mon Nov 16 2026 ahsan <aahsnr041@proton.me> - 0.46.0-1
+- package the terminal helper binary and remove cargo_install's source copy
 * Fri Sep 25 2026 ahsan <aahsnr041@proton.me> - 0.45.1-1
 - source build with the terra rust2rpm macro set (was: prebuilt-binary
   wrapper over the release binary)
