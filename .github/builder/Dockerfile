@@ -14,7 +14,7 @@ FROM registry.fedoraproject.org/fedora-minimal:45
 RUN dnf up -y && \
     dnf swap -y systemd-standalone-sysusers systemd && \
     dnf in -y \
-        copr-cli python3 \
+        copr-cli python3 gcc-c++ \
         rpmdevtools rpm-build \
         mock \
         git-core jq gh && \
