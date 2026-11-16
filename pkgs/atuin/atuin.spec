@@ -23,6 +23,7 @@ URL:            https://crates.io/crates/atuin
 Source0:        https://static.crates.io/crates/%{crate}/%{crate}-%{version}.crate
 
 BuildRequires:  cargo-rpm-macros >= 24
+BuildRequires:  gcc-c++
 BuildRequires:  mold
 # compilation cache server — its cache dir lives on the workspace via the
 # mock config's bind mount, shared across all rust source builds
