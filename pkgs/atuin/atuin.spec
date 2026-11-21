@@ -12,7 +12,7 @@
 %global crate atuin
 
 Name:           atuin
-Version:        18.25.0
+Version:        18.25.1
 Release:        1%{?dist}
 Summary:        Atuin - magical shell history
 
