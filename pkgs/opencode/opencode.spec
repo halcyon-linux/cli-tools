@@ -27,7 +27,7 @@
 %define __brp_linkdupes /bin/true
 
 Name:           opencode
-Version:        2.3.2
+Version:        2.4.0
 Release:        1%{?dist}
 Summary:        AI coding agent for the terminal
 License:        MIT
