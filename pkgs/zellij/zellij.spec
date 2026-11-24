@@ -12,7 +12,7 @@
 %global crate zellij
 
 Name:           zellij
-Version:        0.46.0
+Version:        0.46.1
 Release:        1%{?dist}
 Summary:        Terminal workspace with batteries included
 
