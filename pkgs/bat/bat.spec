@@ -12,7 +12,7 @@
 %global crate bat
 
 Name:           bat
-Version:        0.26.1
+Version:        0.27.0
 Release:        1%{?dist}
 Summary:        Cat(1) clone with wings
 
